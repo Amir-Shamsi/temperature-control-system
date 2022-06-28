@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define LCD_DATA PORTB
+#define LCD_DATA PORTC
 #define ctrl PORTD
 // #define en PIND.2                        
 // #define rw PIND.1                     
