@@ -1,5 +1,6 @@
 /.vscode
-
+/design/*.workspace
+/design/Project Backups
 # Prerequisites
 *.d
 
