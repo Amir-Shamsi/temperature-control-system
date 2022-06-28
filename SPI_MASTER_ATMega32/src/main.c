@@ -52,7 +52,7 @@ int main(void) {
           LCD_cmd(0x01);
 
           pre_tempA = tempA;
-          sprintf(lcd_full_text, "%s%d", init_text, tempA);
+          sprintf(lcd_full_text, "%s%d%cC", init_text, tempA, 0xdf);
           display_on_lcd(lcd_full_text, 50);
           freeze_flag = 0;
         }
