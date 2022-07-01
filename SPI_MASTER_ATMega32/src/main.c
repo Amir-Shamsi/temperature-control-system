@@ -17,7 +17,7 @@ void display_on_lcd(char* content, int delay){
   unsigned char i;
   for(i=0;i<(strlen(content));i++) {
         LCD_write(content[i]);   
-        _delay_ms(delay);
+        // _delay_ms(delay);
   }
 }
 
@@ -31,10 +31,10 @@ void SPI_Init()					/* SPI Initialize function */
 
 void SPI_Write(char data)		/* SPI write data function */
 {
-  char ignore;
+  // char ignore;
 	SPDR = data;
 	while(((SPSR >> SPIF) & 1) == 0);
-  ignore = SPDR;
+  // ignore = SPDR;
 }
 
 int main(void) {
@@ -61,14 +61,11 @@ int main(void) {
     while (1) { 
       if (ACSR & (1<<ACO)){ // if temp A (AIN0) is bigger than temp B (AIN1)
         tempA = ADC_Read(0);
-        // PORTB &= ~(1<<PORTB4);
         SPI_Write(tempA);
-        // PORTB |= (1<<PORTB4);
 
 
         if(tempA != pre_tempA){
           LCD_cmd(0x01);
-
           
           pre_tempA = tempA;
           sprintf(lcd_full_text, "%d%cC", tempA, 0xdf);
