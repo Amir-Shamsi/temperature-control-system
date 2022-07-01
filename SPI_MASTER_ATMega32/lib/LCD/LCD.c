@@ -39,6 +39,6 @@ void LCD_write(unsigned char data)
     ctrl=0x05;               // Register Select = 1, Read/Write = 0, Enable = 1
     _delay_ms(1);
     ctrl=0x01;				 // Enable = 0
-    _delay_ms(50);
+    // _delay_ms(50);
     return ;
 }
