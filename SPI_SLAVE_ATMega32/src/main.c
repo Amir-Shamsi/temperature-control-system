@@ -21,40 +21,72 @@ void display_on_lcd(char* content, int delay){
             _delay_ms(delay);
   }
 }
-
-char SPI_Receive()			/* SPI Receive data function */
+void PWM_init()
 {
-	while(!(SPSR & (1<<SPIF)));	/* Wait till reception complete */
-	return(SPDR);			/* Return received data */
+	/*set fast PWM mode with non-inverted output*/
+	TCCR0 = (1<<WGM00) | (1<<WGM01) | (1<<COM01) | (0<<COM00) | (1<<CS00);
+	DDRB|=(1<<PB3);  /*set OC0 pin as output*/
+}
+char SPI_Receive()
+{
+	while (((SPSR >> SPIF) & 1) == 0);
+	return(SPDR);
 }
 
-void SPI_Init()					/* SPI Initialize function */
+void SPI_Init()
 {
-	DDRB = 0x40;  /* Make MOSI, SCK, SS as
- 						input pins */
-	// DDRB |= (1<<MISO);			/* Make MISO pin as 
-						// output pin */
-	SPCR = (1<<SPE);			/* Enable SPI in slave mode */
+	SPCR = (1<<SPE) | (0<<DORD) | (0<<MSTR) | (0<<CPOL) | (0<<CPHA) | (1<<SPR1) | (1<<SPR0);
+    SPSR = (0<<SPI2X);
 }
+
 
 int main(void) {
-    char fixed_text[20] = "Recieved Temp is ";
-    char lcd_full_text[20], r_temp;
+    char r_temp;
+    int base_duty_cycle = 50, additional_unit, final_duty_cycle;
     DDRC = 0xFF;
     DDRD = 0x07;
-    
+    DDRB = (0<<DDB7) | (1<<DDB6) | (0<<DDB5) | (0<<DDB4);
     init_LCD();
-    LCD_cmd(0x0F);
+    // LCD_cmd(0x0F);
     SPI_Init();
-
+    DDRD |= (1<<DDD3);
 
     sei();
     while (1) { 
+
+          if ((int)r_temp > 55 || (int)r_temp < 25)
+            TCCR0 = (0<<COM00) | (0<<COM01); // Turn off the cooler so disconnect OCO
+
+          if ((int)r_temp >= 20)
+            PORTB &= (0<<PORTB2);
+
           r_temp = SPI_Receive();
-          display_on_lcd(fixed_text, 0);
-          LCD_cmd(0xC0);
-          sprintf(lcd_full_text, "%d", );
-          display_on_lcd(lcd_full_text, 0);
-          LCD_cmd(0x01);
+
+          if((int)r_temp > 55){ // if temp is higher than 55 degrees
+            PORTD |= (1<<PORTD3);
+            _delay_ms(10);
+            PORTD &= (0<<PORTD3);
+            _delay_ms(10);
+          }
+
+          else if ((int)r_temp < 20){
+            DDRB |= (1<<DDB2);
+            PORTB |= (1<<PB2);
+          }
+          else if ((int)r_temp <= 55 && (int)r_temp >= 25) { // For temperatures between 25 and 55 degrees
+            PWM_init();
+            additional_unit = (int)((r_temp - 25)/5);
+            final_duty_cycle = base_duty_cycle + additional_unit*10;
+            if(final_duty_cycle > 100)
+              final_duty_cycle = 100;
+
+            OCR0=(int)((final_duty_cycle*255)/100); 
+          }
+
+          else{ // Ideal state
+            PORTD = (0<<PORTD3);
+            // TODO: Turn off the cooler & heater
+          }
+
     }
 }
