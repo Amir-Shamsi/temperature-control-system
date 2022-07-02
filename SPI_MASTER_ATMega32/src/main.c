@@ -18,33 +18,29 @@ void LCD_String_Write(char* content){
 }
 
 
-
 int main(void) {
     char init_text[20] = "Temperature A:";
     char lcd_full_text[20];
-    int tempA, pre_tempA, freeze_flag=0;
+    int temp_A, pre_temp_A, freeze_flag=0;
     DDRC = 0xFF;
     DDRD = 0x07;
     
     init_LCD();
     SPI_init();
-
     ADC_init();
     AC_init();
-
 
     sei();
     while (1) { 
       if (AC_Result()){ // if temp A (AIN0) is bigger than temp B (AIN1)
-        tempA = ADC_Read(0);
-        SPI_Write(tempA);
+        temp_A = ADC_Read(0);
+        SPI_Write(temp_A);
 
-
-        if(tempA != pre_tempA){
+        if(temp_A != pre_temp_A){
           LCD_cmd(0x01);
           
-          pre_tempA = tempA;
-          sprintf(lcd_full_text, "%d%cC", tempA, 0xdf);
+          pre_temp_A = temp_A;
+          sprintf(lcd_full_text, "%d%cC", temp_A, 0xdf);
           LCD_String_Write(init_text);
           LCD_cmd(0xC0);
           LCD_String_Write(lcd_full_text);
