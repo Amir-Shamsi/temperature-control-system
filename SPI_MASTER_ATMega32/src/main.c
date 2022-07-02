@@ -9,9 +9,9 @@
 #include "Analog_Comparator.h"
 
 
-void display_on_lcd(char* content, int delay){
+void LCD_String_Write(char* content){
   unsigned char i;
-  for(i=0;i<(strlen(content));i++) {
+  for(i=0; i<(strlen(content)); i++) {
         LCD_write(content[i]);   
         // _delay_ms(delay);
   }
@@ -45,9 +45,9 @@ int main(void) {
           
           pre_tempA = tempA;
           sprintf(lcd_full_text, "%d%cC", tempA, 0xdf);
-          display_on_lcd(init_text, 50);
+          LCD_String_Write(init_text);
           LCD_cmd(0xC0);
-          display_on_lcd(lcd_full_text, 50);
+          LCD_String_Write(lcd_full_text);
           freeze_flag = 0;
         }
      }
@@ -57,7 +57,7 @@ int main(void) {
           LCD_cmd(0x01);
 
           sprintf(lcd_full_text, "Temp A < Temp B");
-          display_on_lcd(lcd_full_text, 50);
+          LCD_String_Write(lcd_full_text);
         }
       }
       _delay_ms(2000);
