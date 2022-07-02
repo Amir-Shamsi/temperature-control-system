@@ -4,14 +4,8 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <string.h>
+#include "ADC.h"
 
-int ADC_Read(char channel){
-	ADMUX = 0x40 | (channel & 0x07);
-	ADCSRA |= (1<<ADSC);
-	while (!(ADCSRA & (1<<ADIF)));
-	ADCSRA |= (1<<ADIF);
-	return (int)((ADCW * 4.88) / 10.00);
-}
 
 void display_on_lcd(char* content, int delay){
   unsigned char i;
@@ -47,11 +41,8 @@ int main(void) {
     init_LCD();
     SPI_Init();
     
-    /* ACD */
-    SFIOR = (0<<ADTS2) | (0<<ADTS1) | (0<<ADTS0);
-    DDRA = 0x00;
-    ADCSRA = 0x87;
-    ADMUX = 0x40;
+
+    ADC_init();
 
     /* Analog Comparator */
     // SFIOR &= (1<<ACME);
