@@ -4,6 +4,7 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <string.h>
+#include "SPI.h"
 #include "ADC.h"
 #include "Analog_Comparator.h"
 
@@ -16,21 +17,7 @@ void display_on_lcd(char* content, int delay){
   }
 }
 
-void SPI_Init()					/* SPI Initialize function */
-{
-	DDRB =0xB0;
-	PORTB |= (0<<PORTB4);			/* Make high on SS pin */
-  SPCR = (1<<SPE) | (0<<DORD) | (1<<MSTR) | (0<<CPOL) | (0<<CPHA) | (1<<SPR1) | (1<<SPR0);
-  SPSR = (0<<SPI2X);
-}
 
-void SPI_Write(char data)		/* SPI write data function */
-{
-  // char ignore;
-	SPDR = data;
-	while(((SPSR >> SPIF) & 1) == 0);
-  // ignore = SPDR;
-}
 
 int main(void) {
     char init_text[20] = "Temperature A:";
@@ -40,8 +27,7 @@ int main(void) {
     DDRD = 0x07;
     
     init_LCD();
-    SPI_Init();
-    
+    SPI_init();
 
     ADC_init();
     AC_init();
