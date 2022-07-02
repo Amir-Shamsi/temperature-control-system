@@ -64,9 +64,9 @@ int main(void) {
 
           if((int)r_temp > 55){ // if temp is higher than 55 degrees
             PORTD |= (1<<PORTD3);
-            _delay_ms(10);
+            _delay_ms(100);
             PORTD &= (0<<PORTD3);
-            _delay_ms(10);
+            _delay_ms(100);
           }
 
           else if ((int)r_temp < 20){

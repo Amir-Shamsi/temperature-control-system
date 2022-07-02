@@ -84,6 +84,6 @@ int main(void) {
           display_on_lcd(lcd_full_text, 50);
         }
       }
-      _delay_ms(200);
+      _delay_ms(2000);
     }
 }
