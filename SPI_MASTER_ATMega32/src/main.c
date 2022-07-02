@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "ADC.h"
+#include "Analog_Comparator.h"
 
 
 void display_on_lcd(char* content, int delay){
@@ -43,14 +44,12 @@ int main(void) {
     
 
     ADC_init();
+    AC_init();
 
-    /* Analog Comparator */
-    // SFIOR &= (1<<ACME);
-    ACSR &= 0x00;
 
     sei();
     while (1) { 
-      if (ACSR & (1<<ACO)){ // if temp A (AIN0) is bigger than temp B (AIN1)
+      if (AC_Result()){ // if temp A (AIN0) is bigger than temp B (AIN1)
         tempA = ADC_Read(0);
         SPI_Write(tempA);
 
