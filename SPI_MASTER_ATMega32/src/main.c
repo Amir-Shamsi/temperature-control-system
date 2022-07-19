@@ -24,6 +24,7 @@ int main(void) {
     int temp_A, pre_temp_A, freeze_flag=0;
     DDRC = 0xFF;
     DDRD = 0x07;
+    SFIOR = (0<<ADTS2) | (0<<ADTS1) | (0<<ADTS0);
     
     init_LCD();
     SPI_init();
@@ -42,7 +43,7 @@ int main(void) {
           pre_temp_A = temp_A;
           sprintf(lcd_full_text, "%d%cC", temp_A, 0xdf);
           LCD_String_Write(init_text);
-          LCD_cmd(0xC0);
+          LCD_cmd(0xC0);  // next line
           LCD_String_Write(lcd_full_text);
           freeze_flag = 0;
         }
@@ -56,6 +57,6 @@ int main(void) {
           LCD_String_Write(lcd_full_text);
         }
       }
-      _delay_ms(2000);
+      _delay_ms(1000);
     }
 }
